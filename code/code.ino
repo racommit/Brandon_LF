@@ -7,9 +7,16 @@ int s2 = A1;
 int s3 = A2;
 int s4 = A3;
 int s5 = A4;
+int s6 = A5;
+int s7 = 4;
 
 // pembacaan sensor
-int kiri2,kiri1,tengah,kanan1,kanan2;
+int kiri2,kiri1,tengah,kanan1,kanan2, klik, near;
+
+// menu
+int menu = 1;
+int tekan = 0;
+bool mulai = false;
 
 //motor driver
 int in1 = 12; //ban kanan
@@ -24,7 +31,7 @@ int led=2;
 int led1=3;
 int led2=6;
 int led3=7;
-int ledtes = 4;
+
 
 
 void setup() {
@@ -35,6 +42,8 @@ void setup() {
   pinMode(s3,INPUT);
   pinMode(s4,INPUT);
   pinMode(s5,INPUT);
+  pinMode(s6,INPUT);
+  pinMode(s7,INPUT);
 
 
 // Motor driver
@@ -119,20 +128,65 @@ void bacasensor(){
   tengah = digitalRead(s3); //tengah
   kanan1 = digitalRead(s4); //kanan2
   kanan2 = digitalRead(s5); //paling kanan
+
+  near = digitalRead(s6); //near
+  klik = digitalRead(s7);
 }
 
+void tombol(){
+  if(klik == HIGH){
+  
+    tekan = millis();
+    if(menu == 1){
+      menu = 2;
+    }else if(menu == 2){
+      menu = 1;
+    }
+
+      tekan = tekan / 1000;
+      if(tekan >= 3){
+      mulai = true;
+      }else{
+      mulai = false;
+      }
+
+  }
+
+ 
+  Serial.print(tekan);
+
+
+
+}
 
 void loop() {
+  tombol();
   bacasensor();
   Serial.print(kiri2);
   Serial.print(kiri1);
   Serial.print(tengah);
   Serial.print(kanan1);
   Serial.print(kanan2);
-//  Serial.println(' ');
+  Serial.print("  ");
+  Serial.print(near);
+  Serial.print(klik);
+  Serial.println(' ');
+
+
+  Serial.print(" menu ke");
+  Serial.print(menu);
+  if(mulai == true){
+    Serial.print(" siap jalan ");
+  }else{
+    Serial.print(" tidak siap ");
+  }
+  
+  Serial.print("  ");
   delay(10);
   // put your main code here, to run repeatedly:
 //  cek sensor
+if(menu == 1 && mulai == true){
+  if(near == LOW){
     if(kiri2 == HIGH && kiri1 == HIGH && tengah == HIGH && kanan1 == HIGH  && kanan2 == HIGH || kiri2 == LOW && kiri1 == LOW && tengah == LOW && kanan1 == LOW && kanan2 == LOW){
       lurusdikit();
       Serial.print("lurus dikit");
@@ -243,6 +297,11 @@ void loop() {
     else {
       mati();    
     }
+  }else if(near == HIGH){
+    mati();
+  }
+
+}
 //
 //
 
