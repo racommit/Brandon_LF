@@ -9,6 +9,10 @@ Teknologi yang diterapkan pada proyek kali ini yaitu :
 - Modul sensor infrared 5 item (kiri2, kiri1, tengah, kanan1, kanan2)
 - Motor DC
 
+![Brandon VIEW](https://github.com/racommit/Brandon_LF/blob/main/foto%201.jpg)
+
+
+
 
 
 
