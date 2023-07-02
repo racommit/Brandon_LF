@@ -13,6 +13,14 @@ Teknologi yang diterapkan pada proyek kali ini yaitu :
 
 
 
+Credit by 4th Group team
+- Ahmad Aldisar Syarifuddin (Technician support).
+- Patansyah (Technician support).
+- Reno Isnan Suwarno (Technician support, Project Idea).
+- Rizky Agusti (Technician support, Programmer, Project Idea).
+
+
+
 
 
 
