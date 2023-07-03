@@ -8,7 +8,7 @@ int s3 = A2;
 int s4 = A3;
 int s5 = A4;
 int s6 = A5;
-int s7 = 4;
+
 
 // pembacaan sensor
 int kiri2,kiri1,tengah,kanan1,kanan2, klik, near;
