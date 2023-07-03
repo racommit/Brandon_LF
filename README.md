@@ -1,4 +1,4 @@
-# Brandon_LF 🏎🚗
+# Jalu_LF 🏎🚗
 Adalah sebuah proyek robot line follower dalam mengampu mata kuliah microcontroller, yang dikenal dengan sapaan brandon sebagai nama dari robot line follower yang dibuat.
 
 
@@ -18,6 +18,9 @@ Credit by 4th Group team
 - Patansyah (Technician support).
 - Reno Isnan Suwarno (Technician support, Project Idea).
 - Rizky Agusti (Technician support, Programmer, Project Idea).
+
+![Owner](https://github.com/racommit/Jalu_LF/blob/main/owner.jpg)
+
 
 
 
