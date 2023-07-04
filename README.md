@@ -12,6 +12,18 @@ Teknologi yang diterapkan pada proyek kali ini yaitu :
 ![Brandon VIEW](https://github.com/racommit/Brandon_LF/blob/main/foto%201.jpg)
 
 
+# Deskripsi
+Pada percobaan yang telah dilakukan terdapat banyak faktor yang dapat mempengaruhi kinerja dari si Jalu Line follower, adapun bagi kawan para pengembang dapat menyesuaikan beberapa keadaan sesuai dengan realita percobaan, pembuat kali ini akan menyebutkan beberapa faktor yang dapat mempengaruhi kinerja line follower yaitu :
+- kedekatan posisi sensor dengan alas (pembuat menyarankan untuk menempatkan sensor menempel dengan alas/lantai)
+- kecepatan motor DC sesuai kecepatan pembacaan sensor
+- kapasitas baterai
+- Logic dari sebuah fungsi
+
+Poin-poin di atas didapat berdasarkan pada hasil percobaan yang telah dilakukan, adapun hal-hal diatas akan berbeda beda dari setiap line follower yang dibuat dan medan yang dilalui untuk kemudian dapat disesuaikan menurut kriteria masing-masing.
+
+
+# Catatan
+Pembuat mengupdate rangkaian file program pada branch ![penambahan-fungsi](https://github.com/racommit/Jalu_LF/tree/penambahan-fungsi) adapun branch main akan diupdate setiap 2 minggu sekali.
 
 Credit by 4th Group team
 - Ahmad Aldisar Syarifuddin (Technician support).
