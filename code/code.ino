@@ -13,6 +13,9 @@ int s7 = 4;
 // pembacaan sensor
 int kiri2,kiri1,tengah,kanan1,kanan2, klik, near;
 
+
+int tahan1 = 0;
+
 // menu
 int menu = 1;
 int tekan = 0;
@@ -31,6 +34,14 @@ int led=2;
 int led1=3;
 int led2=6;
 int led3=7;
+
+int tes = 5;
+
+int speedT = 1000;
+int speedR = 500;
+int bagi = 6;
+int pwma;
+int pwmb;
 
 
 
@@ -65,42 +76,43 @@ void setup() {
   strobo();
   strobo1();
 
-
+digitalWrite(tes, LOW);
 //tes motor 
+if(digitalRead(tes) == HIGH){
   digitalWrite(in1,HIGH);
   digitalWrite(in2,LOW);
-  analogWrite(enA,150);
+  analogWrite(enA, 100);
 
   digitalWrite(in3,HIGH);
   digitalWrite(in4,LOW);
-  analogWrite(enB,150);
+  analogWrite(enA, 100);
   delay(500);
 
   digitalWrite(in1,LOW);
   digitalWrite(in2,HIGH);
-  analogWrite(enA,150);
+  analogWrite(enA, 100);
 
   digitalWrite(in3,LOW);
   digitalWrite(in4,HIGH);
-  analogWrite(enB,150);
+  analogWrite(enA, 100);
   delay(500);
 
   digitalWrite(in1,HIGH); //ban kiri maju
   digitalWrite(in2,LOW);
-  analogWrite(enA,150);
+  analogWrite(enA, 100);
 
   digitalWrite(in3,LOW);
   digitalWrite(in4,HIGH); // ban kanan mundur
-  analogWrite(enB,150);
+  analogWrite(enA, 100);
   delay(500);
 
   digitalWrite(in1,LOW);
   digitalWrite(in2,HIGH);
-  analogWrite(enA,150);
+  analogWrite(enA, 100);
 
   digitalWrite(in3,HIGH);
   digitalWrite(in4,LOW);
-  analogWrite(enB,150);
+  analogWrite(enA, 100);
   delay(500);
 
 
@@ -112,6 +124,17 @@ void setup() {
   digitalWrite(in4,LOW);
   analogWrite(enB,0);
   delay(500);
+}else if(digitalRead(tes) == LOW){
+  
+  digitalWrite(in1,LOW);
+  digitalWrite(in2,LOW);
+  analogWrite(enA,0);
+
+  digitalWrite(in3,LOW);
+  digitalWrite(in4,LOW);
+  analogWrite(enB,0);
+  delay(500);
+}
 
 
   digitalWrite(s1,LOW);
@@ -150,17 +173,14 @@ void tombol(){
       mulai = false;
       }
 
-  }
-
- 
+}
   Serial.print(tekan);
-
-
-
 }
 
+
+
 void loop() {
-  tombol();
+  // tombol();
   bacasensor();
   Serial.print(kiri2);
   Serial.print(kiri1);
@@ -168,145 +188,215 @@ void loop() {
   Serial.print(kanan1);
   Serial.print(kanan2);
   Serial.print("  ");
-  Serial.print(near);
-  Serial.print(klik);
-  Serial.println(' ');
+//  Serial.print(near);
+//  Serial.print(klik);
+  // Serial.print(enA);
+    Serial.print("  ");
+  // Serial.print(enB);
+//  Serial.println(' ');
 
 
-  Serial.print(" menu ke");
-  Serial.print(menu);
-  if(mulai == true){
-    Serial.print(" siap jalan ");
-  }else{
-    Serial.print(" tidak siap ");
-  }
+  // Serial.print(" menu ke");
+  // Serial.print(menu);
+  // if(mulai == true){
+  //   Serial.print(" siap jalan ");
+  // }else{
+  //   Serial.print(" tidak siap ");
+  // }
   
-  Serial.print("  ");
-  delay(10);
+
   // put your main code here, to run repeatedly:
 //  cek sensor
-if(menu == 1 && mulai == true){
-  if(near == LOW){
-    if(kiri2 == HIGH && kiri1 == HIGH && tengah == HIGH && kanan1 == HIGH  && kanan2 == HIGH || kiri2 == LOW && kiri1 == LOW && tengah == LOW && kanan1 == LOW && kanan2 == LOW){
-      lurusdikit();
-      Serial.print("lurus dikit");
+// if(menu == 1 && mulai == true){
+//  if(near == LOW){
+    if(kiri2 == HIGH && kiri1 == HIGH && tengah == HIGH && kanan1 == HIGH  && kanan2 == HIGH){//11111
+      if(tahan1 == 1){
+        kanan();
+        speedR;
+        pwma = speedR / bagi;
+        analogWrite(enA,pwma);
+        analogWrite(enB,0);
+      }else if(tahan1 == 2){
+        kiri();
+        speedR;
+        pwmb = speedR / bagi;
+        analogWrite(enA,0);
+        analogWrite(enB,pwmb); //ban kanan
+      }
+      Serial.print("orientation");
       Serial.println(' ');
-    }else if(kiri2 == HIGH && kiri1 == HIGH && tengah == LOW && kanan1 == HIGH  && kanan2 == HIGH){ //11011
+    }else if(kiri2 == LOW && kiri1 == LOW && tengah == LOW && kanan1 == LOW && kanan2 == LOW){//00000
+      int waktu = millis();
+      waktu = waktu /1000;
+      if(waktu >= 1){
+        mati();
+        for(int i =0;i<=3;i++){
+              digitalWrite(led,HIGH);
+              digitalWrite(led2,LOW);
+              digitalWrite(led1,HIGH);
+              digitalWrite(led3,LOW);
+              delay(100);
+              digitalWrite(led,LOW);
+              digitalWrite(led2,HIGH);
+              digitalWrite(led1,LOW);
+              digitalWrite(led3,HIGH);
+              delay(100);
+          }
+      }else{
+        lurusdikit();
+      }
+    }
+    else if(kiri2 == HIGH && kiri1 == HIGH && tengah == LOW && kanan1 == HIGH  && kanan2 == HIGH){ //11011
     lurus();
+    tahan1 = 0;
     Serial.print("lurus");
     Serial.println(' ');
     }else if(kiri2 == HIGH && kiri1 == HIGH && tengah == LOW && kanan1 == LOW  && kanan2 == LOW){//11000
-     mati();
-     kanantajam();
-     Serial.print("kanan tajam");
+     
+     tahan1 = 1;
+     kanan();
+
+      pwma = speedT / bagi; // ban kiri
+      analogWrite(enA,pwma);
+      pwmb = speedR / bagi; //ban kanan
+      analogWrite(enB,pwmb);
+     Serial.print("kanan");
      Serial.println(' ');
     }else if(kiri2 == LOW && kiri1 == LOW && tengah == LOW && kanan1 == HIGH  && kanan2 == HIGH){//00011
-      mati();
-     kiritajam();
-     Serial.print("kiri tajam");
+      // mati();
+      tahan1=2;
+     kiri();
+      pwma = speedR / bagi;
+      analogWrite(enA,pwma);
+
+      pwmb = speedT / bagi;
+      analogWrite(enB,pwmb);
+     Serial.print("kiri");
      Serial.println(' ');
     }else if(kiri2 == HIGH && kiri1 == HIGH && tengah == HIGH && kanan1 == LOW && kanan2 == HIGH){//11101
-     serongkanan();
-     Serial.print("serong kanan");
-     Serial.println(' ');
+      tahan1=0;
+      serongkanan();
+      Serial.print("serong kanan");
+      Serial.println(' ');
     }else if(kiri2 == HIGH && kiri1 == LOW && tengah == HIGH && kanan1 == HIGH && kanan2 == HIGH){//10111
+      tahan1=0;
       serongkiri();
       Serial.print("serong kiri");
       Serial.println(' ');
     }else if(kiri2 == HIGH && kiri1 == HIGH && tengah == HIGH && kanan1 == LOW && kanan2 == LOW){//11100
-      mati();
-      kanantajam();
-      Serial.print("kanan tajam");
-      Serial.println(' ');
-    }else if(kiri2 == LOW && kiri1 == LOW && tengah == HIGH && kanan1 == HIGH && kanan2 == HIGH){//00111
-      mati();
-      kiritajam();
-      Serial.print("kiri tajam");
-      Serial.println(' ');
-    }else if(kiri2 == HIGH && kiri1 == HIGH && tengah == HIGH && kanan1 == HIGH && kanan2 == LOW){//11110
-      kanantajam();
-      Serial.print("kanan tajam");
-      Serial.println(' ');
-    }else if(kiri2 == LOW && kiri1 == HIGH && tengah == HIGH && kanan1 == HIGH && kanan2 == HIGH){//01111
-      kiritajam();
-      Serial.print("kiri tajam");
-      Serial.println(' ');
-    }else if(kiri2 == HIGH && kiri1 == HIGH && tengah == LOW && kanan1 == LOW && kanan2 == HIGH){//11001
-      kanantajam();
-      Serial.print("kanan tajam");
-      Serial.println(' ');
-    }else if(kiri2 == HIGH && kiri1 == LOW && tengah == LOW && kanan1 == HIGH && kanan2 == HIGH){//10011
-      kiritajam();
-      Serial.print("kiri tajam");
-      Serial.println(' ');
-    }else if(kiri2 == HIGH && kiri1 == LOW && tengah == LOW && kanan1 == LOW && kanan2 == LOW){//10000
-      mati();
-      kanantajam();
-      Serial.print("kanan tajam");
-      Serial.println(' ');
-    }else if(kiri2 == LOW && kiri1 == LOW && tengah == LOW && kanan1 == LOW && kanan2 == HIGH){//00001
-      mati();
-      kiritajam();
-      Serial.print("kiri tajam");
-      Serial.println(' ');
-    }else if(kiri2 == HIGH && kiri1 == HIGH && tengah == LOW && kanan1 == HIGH && kanan2 == LOW){//11010
-      kanantajam();
-      Serial.print("kanan tajam");
-      Serial.println(' ');
-    }else if(kiri2 == LOW && kiri1 == HIGH && tengah == LOW && kanan1 == HIGH && kanan2 == HIGH){//01011
-      kiritajam();
-      Serial.print("kiri tajam");
-      Serial.println(' ');
-    }else if(kiri2 == HIGH && kiri1 == LOW && tengah == LOW && kanan1 == HIGH && kanan2 == LOW){//10010
-      kanantajam();
-      Serial.print("kanan tajam");
-      Serial.println(' ');
-    }else if(kiri2 == LOW && kiri1 == HIGH && tengah == LOW && kanan1 == LOW && kanan2 == HIGH){//01001
-      kiritajam();
-      Serial.print("kiri tajam");
-      Serial.println(' ');
-    }else if(kiri2 == HIGH && kiri1 == LOW && tengah == LOW && kanan1 == LOW && kanan2 == HIGH){//10001
+      // mati();
+      tahan1 = 1;
       serongkanan();
       Serial.print("serong kanan");
+      Serial.println(' ');
+    }else if(kiri2 == LOW && kiri1 == LOW && tengah == HIGH && kanan1 == HIGH && kanan2 == HIGH){//00111
+      // mati();
+      tahan1 = 2;
+      serongkiri();
+      Serial.print("serong kiri");
+      Serial.println(' ');
+    }else if(kiri2 == HIGH && kiri1 == HIGH && tengah == HIGH && kanan1 == HIGH && kanan2 == LOW){//11110
+      tahan1 = 1;
+      serongkanan();
+      Serial.print("serong kanan");
+      Serial.println(' ');
+    }else if(kiri2 == LOW && kiri1 == HIGH && tengah == HIGH && kanan1 == HIGH && kanan2 == HIGH){//01111
+      tahan1 = 2;
+      serongkiri();
+      Serial.print("serong kiri");
+      Serial.println(' ');
+      
+    }else if(kiri2 == HIGH && kiri1 == HIGH && tengah == LOW && kanan1 == LOW && kanan2 == HIGH){//11001
+      tahan1=0;
+      lurusdikit();
+      Serial.print("lurus");
+      Serial.println(' ');
+    }else if(kiri2 == HIGH && kiri1 == LOW && tengah == LOW && kanan1 == HIGH && kanan2 == HIGH){//10011
+      tahan1=0;
+      lurusdikit();
+      Serial.print("lurus");
+      Serial.println(' ');
+    }else if(kiri2 == HIGH && kiri1 == LOW && tengah == LOW && kanan1 == LOW && kanan2 == LOW){//10000
+      tahan1 =1;
+      serongkanan();
+      Serial.print("serong kanan");
+      Serial.println(' ');
+    }else if(kiri2 == LOW && kiri1 == LOW && tengah == LOW && kanan1 == LOW && kanan2 == HIGH){//00001
+      tahan1 =2;
+      serongkiri();
+      Serial.print("serong kiri");
+      Serial.println(' ');
+    }else if(kiri2 == HIGH && kiri1 == HIGH && tengah == LOW && kanan1 == HIGH && kanan2 == LOW){//11010
+      serongkanan();
+      Serial.print("kanan");
+      Serial.println(' ');
+    }else if(kiri2 == LOW && kiri1 == HIGH && tengah == LOW && kanan1 == HIGH && kanan2 == HIGH){//01011
+      serongkiri();
+      Serial.print("kiri");
+      Serial.println(' ');
+    }else if(kiri2 == HIGH && kiri1 == LOW && tengah == LOW && kanan1 == HIGH && kanan2 == LOW){//10010
+      serongkanan();
+      Serial.print("kanan");
+      Serial.println(' ');
+    }else if(kiri2 == LOW && kiri1 == HIGH && tengah == LOW && kanan1 == LOW && kanan2 == HIGH){//01001
+      serongkiri();
+      Serial.print("kiri");
+      Serial.println(' ');
+    }else if(kiri2 == HIGH && kiri1 == LOW && tengah == LOW && kanan1 == LOW && kanan2 == HIGH){//10001
+      lurusdikit();
+      Serial.print("lurus dikit");
       Serial.println(' ');
     }else if(kiri2 == HIGH && kiri1 == LOW && tengah == HIGH && kanan1 == LOW && kanan2 == HIGH){//10101
       lurusdikit();
       Serial.print("lurus dikit");
       Serial.println(' ');
     }else if(kiri2 == LOW && kiri1 == LOW && tengah == HIGH && kanan1 == LOW && kanan2 == HIGH){//00101
-      kiritajam();
-      Serial.print("kiri tajam");
+      serongkanan();
+      Serial.print("serong kanan");
       Serial.println(' ');
-    }else if(kiri2 == HIGH && kiri1 == LOW && tengah == HIGH && kanan1 == LOW && kanan2 == LOW){//10100
-      kanantajam();
-      Serial.print("kanan tajam");
+    }
+    else if(kiri2 == HIGH && kiri1 == LOW && tengah == HIGH && kanan1 == LOW && kanan2 == LOW){//10100
+      serongkiri();
+      Serial.print("serong kiri");
       Serial.println(' ');
     }else if(kiri2 == LOW && kiri1 == HIGH && tengah == LOW && kanan1 == LOW && kanan2 == LOW){//01000
-      kanantajam();
-      Serial.print("kanan tajam");
+      tahan1 = 1;
+      serongkanan();
+      Serial.print("serong kanan");
       Serial.println(' ');
     }else if(kiri2 == LOW && kiri1 == LOW && tengah == LOW && kanan1 == HIGH && kanan2 == LOW){//00010
-      kiritajam();
-      Serial.print("kiri tajam");
+      tahan1= 2;
+      serongkiri();
+      Serial.print("serong kiri");
       Serial.println(' ');    
     }else if(kiri2 == LOW && kiri1 == LOW && tengah == HIGH && kanan1 == LOW && kanan2 == LOW){//00100
       mundurdikit();
       Serial.print("mundur dikit");
       Serial.println(' ');    
+    }else if(kiri2 == LOW && kiri1 == HIGH && tengah == HIGH && kanan1 == LOW && kanan2 == HIGH){//01101
+      tahan1 = 2;
+      serongkiri();
+      Serial.print("serong kiri");
+      Serial.println(' ');    
+    }else if(kiri2 == HIGH && kiri1 == LOW && tengah == HIGH && kanan1 == HIGH && kanan2 == LOW){//10110
+      tahan1 = 1;
+      serongkanan();
+      Serial.print("serong kanan");
+      Serial.println(' ');
     }
     else {
       mati();    
     }
-  }else if(near == HIGH){
-    mati();
-  }
+  // }else if(near == HIGH){
+  //   mati();
+  // }
 
 }
 //
 //
 
    
-}
+
 
 
 void strobo(){
@@ -353,11 +443,16 @@ void strobo1(){
 void lurus(){
   digitalWrite(in1,HIGH); //ban kiri
   digitalWrite(in2,LOW);
-  analogWrite(enA,150);
+      //tinggi
+ 
+      pwma = speedT / bagi;
+      analogWrite(enA,pwma); //ban kiri
 
   digitalWrite(in3,HIGH); //ban kanan
   digitalWrite(in4,LOW);
-  analogWrite(enB,150);
+   
+      pwmb = speedT / bagi;
+      analogWrite(enB,pwmb); //ban kanan
 
   digitalWrite(led,HIGH);
   digitalWrite(led1,HIGH);
@@ -368,20 +463,18 @@ void lurus(){
 void lurusdikit(){
   digitalWrite(in1,HIGH); //ban kiri
   digitalWrite(in2,LOW);
-  analogWrite(enA,95);
+      speedR = 500;
+      pwma = speedR / bagi;
+      analogWrite(enA,pwma);
 
   digitalWrite(in3,HIGH); //ban kanan
   digitalWrite(in4,LOW);
-  analogWrite(enB,95);
-  delay(10);
+      speedR = 500;
+      pwmb = speedR / bagi;
+      analogWrite(enB,pwmb);
 
-  digitalWrite(in1,LOW); //ban kiri
-  digitalWrite(in2,LOW);
-  analogWrite(enA,0);
 
-  digitalWrite(in3,LOW); //ban kanan
-  digitalWrite(in4,LOW);
-  analogWrite(enB,0);
+
 
   digitalWrite(led,HIGH);
   digitalWrite(led1,HIGH);
@@ -390,41 +483,84 @@ void lurusdikit(){
 }
 
 
-void kiritajam(){
+void kiri(){
   digitalWrite(in1,LOW); //ban kiri
   digitalWrite(in2,HIGH);
-  analogWrite(enA,150);
+
 
   digitalWrite(in3,HIGH); //ban ban kanan
   digitalWrite(in4,LOW);
-  analogWrite(enB,150);
+
+
 
   digitalWrite(led,HIGH);
   digitalWrite(led1,LOW);
   digitalWrite(led2,HIGH);
   digitalWrite(led3,LOW);
+ 
 }
 
 
-void kanantajam(){
+void kanan(){
   digitalWrite(in1,HIGH); //ban kiri
   digitalWrite(in2,LOW);
-  analogWrite(enA,150);
+  
 
   digitalWrite(in3,LOW); //ban kanan
   digitalWrite(in4,HIGH);
-  analogWrite(enB,150);
+
+
+
+
 
   digitalWrite(led,LOW);
   digitalWrite(led1,HIGH);
   digitalWrite(led2,LOW);
   digitalWrite(led3,HIGH);
+  
+}
+
+void kanantajam(){
+  digitalWrite(in1,HIGH); //ban kiri
+  digitalWrite(in2,LOW);
+  analogWrite(enA,100);
+
+  digitalWrite(in3,LOW); //ban kanan
+  digitalWrite(in4,HIGH);
+  analogWrite(enB,0);
+
+
+  digitalWrite(led,LOW);
+  digitalWrite(led1,HIGH);
+  digitalWrite(led2,LOW);
+  digitalWrite(led3,HIGH);
+  
+}
+
+void kiritajam(){
+  digitalWrite(in1,LOW); //ban kiri
+  digitalWrite(in2,HIGH);
+  
+
+  digitalWrite(in3,HIGH); //ban kanan
+  digitalWrite(in4,LOW);
+
+
+  analogWrite(enA,0);
+  analogWrite(enB,100);
+
+
+  digitalWrite(led,LOW);
+  digitalWrite(led1,HIGH);
+  digitalWrite(led2,LOW);
+  digitalWrite(led3,HIGH);
+  
 }
 
 void mati(){
    digitalWrite(in1, LOW); //ban kanan
    digitalWrite(in2, LOW);
-   analogWrite(enA, 0);
+   analogWrite(enA,0);
 
 
    digitalWrite(in3, LOW); //ban kiri
@@ -441,33 +577,38 @@ void mati(){
 void serongkanan(){
   digitalWrite(in1,HIGH); //ban kiri
   digitalWrite(in2,LOW);
-  analogWrite(enA,150);
+
+      pwma = speedR / bagi;
+      analogWrite(enA,pwma);
+  
 
   digitalWrite(in3,LOW); //ban kanan
   digitalWrite(in4,HIGH);
-  analogWrite(enB,100);
+  analogWrite(enB,0);
 }
 
 void serongkiri(){
   digitalWrite(in1,LOW); //ban kiri
   digitalWrite(in2,HIGH);
-  analogWrite(enA,100);
+  analogWrite(enA,0);
 
   digitalWrite(in3,HIGH); //ban kanan
   digitalWrite(in4,LOW);
-  analogWrite(enB,150);
+      speedR = 500;
+      pwmb = speedR / bagi;
+      analogWrite(enB,pwmb);
 }
 
 
 void mundurdikit(){
    digitalWrite(in1, LOW); //ban kanan
    digitalWrite(in2, HIGH);
-   analogWrite(enA, 150);
+   analogWrite(enA,100);
 
 
    digitalWrite(in3, LOW); //ban kiri
    digitalWrite(in4, HIGH);
-   analogWrite(enB, 100);
+   analogWrite(enB, 150);
 
 
    digitalWrite(led,LOW);
